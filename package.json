@@ -2,7 +2,7 @@
   "name": "bifrost-discord-bot",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "isonar#5236",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -21,12 +21,18 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@discord-nestjs/common": "^2.0.18",
+    "@discord-nestjs/core": "^2.1.13",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/schedule": "^1.0.2",
+    "cls-hooked": "^4.2.2",
+    "discord.js": "13.6.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "typed-graphqlify": "^3.1.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

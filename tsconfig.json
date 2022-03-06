@@ -1,21 +1,29 @@
 {
   "compilerOptions": {
+    "target": "esnext",
     "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "strict": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,     /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+    "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */
+    "experimentalDecorators": true,           /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "types" : [
+      "node"
+    ],
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "outDir": "./dist"
   }
 }
