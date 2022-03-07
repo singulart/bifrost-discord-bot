@@ -2,12 +2,14 @@ import { DiscordModule, DiscordModuleOption } from '@discord-nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Intents, Message } from 'discord.js';
+import { GraphQLModule } from 'src/gql/gql.module';
 import { botConfig } from '../config';
+import { BifrostService } from './bot.service';
 
 @Module({
   imports: [
     DiscordModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, GraphQLModule],
       useFactory: (configService: ConfigService) => ({
         token: configService.get('TOKEN'),
         commands: ['**/*.command.js'],
@@ -24,9 +26,10 @@ import { botConfig } from '../config';
           },
         ],
       } as DiscordModuleOption),
-      inject: [ConfigService],
+      inject: [ConfigService, 'BifrostGqlSdk'],
     }),
+    GraphQLModule
   ],
-  providers: []
+  providers: [BifrostService]
 })
 export class BotModule {}
