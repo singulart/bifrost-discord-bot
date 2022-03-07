@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "generate": "graphql-codegen",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -24,7 +25,9 @@
     "@discord-nestjs/common": "^2.0.18",
     "@discord-nestjs/core": "^2.1.13",
     "@golevelup/nestjs-graphql-request": "^0.1.10",
+    "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typescript-graphql-request": "^4.3.7",
+    "@graphql-codegen/typescript-operations": "^2.3.2",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/schedule": "^1.0.2",

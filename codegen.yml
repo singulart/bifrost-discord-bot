@@ -1,7 +1,38 @@
+# Run codegen using: npm run generate
+# Make sure the schema endpoint is accessible! 
 schema: http://localhost:3000/graphql
-documents: ./src/**/*.graphql
+documents:
+  - >
+    query BifrostMinted($dateFrom: Datetime) {
+      salpLiteIssueds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}) {
+        nodes {
+          account
+          balance
+          blockHeight
+          blockTimestamp
+          paraId
+        }
+        totalCount
+      }
+    }
+
+  - >
+    query BifrostRedeemed($dateFrom: Datetime) {
+      salpLiteRedeemeds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}) {
+        nodes {
+          account
+          balance
+          blockHeight
+          blockTimestamp
+          paraId
+        }
+        totalCount
+      }
+    }
+
 generates:
   ./src/types.ts:
     plugins:
       - typescript
       - typescript-operations
+      - typescript-graphql-request
