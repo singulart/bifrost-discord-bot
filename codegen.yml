@@ -4,7 +4,7 @@ schema: http://localhost:3000/graphql
 documents:
   - >
     query BifrostMinted($dateFrom: Datetime) {
-      salpLiteIssueds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}) {
+      salpLiteIssueds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}, orderBy: BLOCK_TIMESTAMP_ASC) {
         nodes {
           account
           balance
@@ -18,7 +18,7 @@ documents:
 
   - >
     query BifrostRedeemed($dateFrom: Datetime) {
-      salpLiteRedeemeds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}) {
+      salpLiteRedeemeds(filter: {blockTimestamp: {greaterThanOrEqualTo: $dateFrom}}, orderBy: BLOCK_TIMESTAMP_ASC) {
         nodes {
           account
           balance
