@@ -1,5 +1,7 @@
 import { DiscordClientProvider, Once } from '@discord-nestjs/core';
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import moment from 'moment';
 import { Sdk } from 'src/types';
 import { botConfig } from '../config';
 
@@ -21,8 +23,15 @@ export class BifrostService {
     await this.discordProvider.getClient().channels.fetch(botConfig.redemptionChannel);
   }
 
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async queryMints(): Promise<any | null> {
-    return (await this.sdk.BifrostMinted({dateFrom: new Date()})).salpLiteIssueds?.totalCount
-  }
+    const createdAgo: number = botConfig.createdAgo;
+    const createdAgoUnit: string = botConfig.createdAgoUnit;
+    const createdAt = moment().utc().subtract(createdAgo, createdAgoUnit as moment.unitOfTime.DurationConstructor);
+    const formattedDate = createdAt.format("YYYY-DD-MMMTHH:mm:ssZ");
+    this.logger.log(`Looking for mint events since ${formattedDate}`);
 
+    const mintEvents = await this.sdk.BifrostMinted({dateFrom: new Date()});
+    this.logger.log(`Total mint events: ${mintEvents.salpLiteIssueds?.totalCount}`);
+  }
 }

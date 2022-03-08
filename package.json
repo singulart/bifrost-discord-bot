@@ -33,6 +33,7 @@
     "@nestjs/schedule": "^1.0.2",
     "cls-hooked": "^4.2.2",
     "discord.js": "13.6.0",
+    "moment": "^2.29.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
