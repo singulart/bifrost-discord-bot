@@ -54,7 +54,7 @@ export class BifrostService {
     const mintEvents = await this.sdk.BifrostRedeemed({ dateFrom: createdAt });
     this.logger.log(`Total redemption events: ${mintEvents.salpLiteRedeemeds?.totalCount}`);
     mintEvents.salpLiteRedeemeds?.nodes.forEach(async element => {
-      const channel: TextChannel = this.discordProvider.getClient().channels.cache.get(botConfig.mintChannel) as TextChannel;
+      const channel: TextChannel = this.discordProvider.getClient().channels.cache.get(botConfig.redemptionChannel) as TextChannel;
       const sentMessage = await channel.send({
         embeds: [this.createRedemptionEmbed(element as SalpLiteRedeemed)]
       });
