@@ -34,12 +34,13 @@ export class BifrostService {
 
     const mintEvents = await this.sdk.BifrostMinted({ dateFrom: createdAt });
     this.logger.log(`Total mint events: ${mintEvents.salpLiteIssueds?.totalCount}`);
+    const weekTotal = await this.queryWeeklyMintTotal();
     mintEvents.salpLiteIssueds?.nodes.forEach(async element => {
       const channel = this.getChannel(botConfig.mintChannel);
       const sentMessage = await channel.send({
-        embeds: [this.createMintEmbed(element as SalpLiteIssued)]
+        embeds: [this.createMintEmbed(element as SalpLiteIssued, weekTotal)]
       });
-      this.logger.debug(`Announced ${sentMessage.id}`);        
+      this.logger.debug(`Event announced ${sentMessage.id}`);
     });
   }
 
@@ -50,34 +51,56 @@ export class BifrostService {
 
     const redemptionEvents = await this.sdk.BifrostRedeemed({ dateFrom: createdAt });
     this.logger.log(`Total redemption events: ${redemptionEvents.salpLiteRedeemeds?.totalCount}`);
+    const weekTotal = await this.queryWeeklyMintTotal();
     redemptionEvents.salpLiteRedeemeds?.nodes.forEach(async element => {
       const channel = this.getChannel(botConfig.redemptionChannel);
       const sentMessage = await channel.send({
-        embeds: [this.createRedemptionEmbed(element as SalpLiteRedeemed)]
+        embeds: [this.createRedemptionEmbed(element as SalpLiteRedeemed, weekTotal)]
       });
-      this.logger.debug(`Announced ${sentMessage.id}`);        
+      this.logger.debug(`Event announced ${sentMessage.id}`);
     });
+  }
+
+  async queryWeeklyMintTotal(): Promise<number> {
+    const mintEvents = await this.sdk.BifrostMinted({ dateFrom:  moment().utc().subtract(7, 'days') });
+    let nodes = mintEvents.salpLiteIssueds?.nodes;
+    if(nodes) {
+      return nodes.map(node => +node?.balance).reduce((prev, current) => prev + current, 0);
+    } else {
+      return 0;
+    }
+  }
+
+  async queryWeeklyRedemptionTotal(): Promise<number> {
+    const redemptionEvents = await this.sdk.BifrostRedeemed({ dateFrom:  moment().utc().subtract(7, 'days') });
+    let nodes = redemptionEvents.salpLiteRedeemeds?.nodes;
+    if(nodes) {
+      return nodes.map(node => +node?.balance).reduce((prev, current) => prev + current, 0);
+    } else {
+      return 0;
+    }
   }
 
   getChannel(channel: string): TextChannel {
     return this.discordProvider.getClient().channels.cache.get(channel) as TextChannel;
   }
 
-  createMintEmbed(mintEvent: SalpLiteIssued): MessageEmbed {
-    return this.createAnnouncementEmbed(mintEvent, 'redemption')
+  createMintEmbed(mintEvent: SalpLiteIssued, weekTotal: number): MessageEmbed {
+    return this.createAnnouncementEmbed(mintEvent, 'redemption', weekTotal)
   }
 
-  createRedemptionEmbed(mintEvent: SalpLiteRedeemed): MessageEmbed {
-    return this.createAnnouncementEmbed(mintEvent, 'mint')
+  createRedemptionEmbed(mintEvent: SalpLiteRedeemed, weekTotal: number): MessageEmbed {
+    return this.createAnnouncementEmbed(mintEvent, 'mint', weekTotal)
   }
 
-  createAnnouncementEmbed(mintEvent: SalpLiteIssued | SalpLiteRedeemed, evetType: string): MessageEmbed {
+  createAnnouncementEmbed(mintEvent: SalpLiteIssued | SalpLiteRedeemed, evetType: string, weekTotal: number): MessageEmbed {
     const announcementEmbed = new MessageEmbed()
     .setTitle(`🌿 New ${evetType} event`)
     .addField('Account', `${mintEvent.account}`, true)
     .addField('Parachain', `${mintEvent.paraId}`, true)
     .addField('Block #', `${mintEvent.blockHeight}`, true)
     .addField('Amount', `${mintEvent.balance}`, true)
+    .addField('Weekly Volume', `${weekTotal}`, true)
     .setTimestamp(mintEvent.blockTimestamp);
 
     return announcementEmbed;
