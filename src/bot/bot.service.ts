@@ -1,14 +1,16 @@
 import { DiscordClientProvider, Once } from '@discord-nestjs/core';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
-import { MessageEmbed, TextChannel } from 'discord.js';
-import moment from 'moment';
+import { Cron } from '@nestjs/schedule';
+import { ChannelManager, MessageEmbed, TextChannel } from 'discord.js';
 import { SalpLiteIssued, SalpLiteRedeemed, Sdk } from 'src/types';
 import { botConfig } from '../config';
+import moment from 'moment';
 
 @Injectable()
 export class BifrostService {
   private readonly logger = new Logger(BifrostService.name);
+
+  private readonly dateFormat = "YYYY-DD-MMMTHH:mm:ssZ";
 
   constructor(
     @Inject("BifrostGqlSdk") private readonly sdk: Sdk,
@@ -20,22 +22,20 @@ export class BifrostService {
     this.logger.log(
       `Logged in as ${this.discordProvider.getClient()?.user?.tag}!`,
     );
-    await this.discordProvider.getClient().channels.fetch(botConfig.mintChannel);
-    await this.discordProvider.getClient().channels.fetch(botConfig.redemptionChannel);
+    let channels: ChannelManager = this.discordProvider.getClient().channels;
+    await channels.fetch(botConfig.mintChannel);
+    await channels.fetch(botConfig.redemptionChannel);
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  async queryMints(): Promise<any | null> {
-    const createdAgo: number = botConfig.createdAgo;
-    const createdAgoUnit: string = botConfig.createdAgoUnit;
-    const createdAt = moment().utc().subtract(createdAgo, createdAgoUnit as moment.unitOfTime.DurationConstructor);
-    const formattedDate = createdAt.format("YYYY-DD-MMMTHH:mm:ssZ");
-    this.logger.log(`Looking for mint events since ${formattedDate}`);
+  @Cron(botConfig.frequency)
+  async queryMints(): Promise<void> {
+    const createdAt = moment().utc().subtract(botConfig.createdAgo, botConfig.createdAgoUnit as moment.unitOfTime.DurationConstructor);
+    this.logger.log(`Looking for mint events since ${createdAt.format(this.dateFormat)}`);
 
     const mintEvents = await this.sdk.BifrostMinted({ dateFrom: createdAt });
     this.logger.log(`Total mint events: ${mintEvents.salpLiteIssueds?.totalCount}`);
     mintEvents.salpLiteIssueds?.nodes.forEach(async element => {
-      const channel: TextChannel = this.discordProvider.getClient().channels.cache.get(botConfig.mintChannel) as TextChannel;
+      const channel = this.getChannel(botConfig.mintChannel);
       const sentMessage = await channel.send({
         embeds: [this.createMintEmbed(element as SalpLiteIssued)]
       });
@@ -43,23 +43,24 @@ export class BifrostService {
     });
   }
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(botConfig.frequency)
   async queryRedemptions(): Promise<void> {
-    const createdAgo: number = botConfig.createdAgo;
-    const createdAgoUnit: string = botConfig.createdAgoUnit;
-    const createdAt = moment().utc().subtract(createdAgo, createdAgoUnit as moment.unitOfTime.DurationConstructor);
-    const formattedDate = createdAt.format("YYYY-DD-MMMTHH:mm:ssZ");
-    this.logger.log(`Looking for redemption events since ${formattedDate}`);
+    const createdAt = moment().utc().subtract(botConfig.createdAgo, botConfig.createdAgoUnit as moment.unitOfTime.DurationConstructor);
+    this.logger.log(`Looking for redemption events since ${createdAt.format(this.dateFormat)}`);
 
-    const mintEvents = await this.sdk.BifrostRedeemed({ dateFrom: createdAt });
-    this.logger.log(`Total redemption events: ${mintEvents.salpLiteRedeemeds?.totalCount}`);
-    mintEvents.salpLiteRedeemeds?.nodes.forEach(async element => {
-      const channel: TextChannel = this.discordProvider.getClient().channels.cache.get(botConfig.redemptionChannel) as TextChannel;
+    const redemptionEvents = await this.sdk.BifrostRedeemed({ dateFrom: createdAt });
+    this.logger.log(`Total redemption events: ${redemptionEvents.salpLiteRedeemeds?.totalCount}`);
+    redemptionEvents.salpLiteRedeemeds?.nodes.forEach(async element => {
+      const channel = this.getChannel(botConfig.redemptionChannel);
       const sentMessage = await channel.send({
         embeds: [this.createRedemptionEmbed(element as SalpLiteRedeemed)]
       });
       this.logger.debug(`Announced ${sentMessage.id}`);        
     });
+  }
+
+  getChannel(channel: string): TextChannel {
+    return this.discordProvider.getClient().channels.cache.get(channel) as TextChannel;
   }
 
   createMintEmbed(mintEvent: SalpLiteIssued): MessageEmbed {
@@ -81,6 +82,4 @@ export class BifrostService {
 
     return announcementEmbed;
   }
-
-
 }
