@@ -4,7 +4,7 @@
 
 `bifrost-discord-bot` is a bespoke application that notifies (via Discord) about [Bifrost](https://bifrost.subscan.io/) minting and redemption events using Subquery GraphQL feed. Sponsored by Subquery [Grant Programme](https://subquery.network/grants), March 2022. 
 
-`bifrost-discord-bot` doesn't use any custom Discord commands, and isn't programmed to react to mentions and DMs, so strictly speaking this is not a bot. Built using [Discord.js](https://discord.js.org/), [Nest](https://nestjs.com/), [GraphQL](). 
+`bifrost-discord-bot` doesn't use any custom Discord commands, and isn't programmed to react to mentions and DMs, so strictly speaking this is not a bot. Built using [Discord.js](https://discord.js.org/), [Nest](https://nestjs.com/), [GraphQL Codegen](https://github.com/dotansimha/graphql-code-generator). 
 
 ## Dependencies
 
