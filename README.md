@@ -1,6 +1,6 @@
 ## bifrost-discord-bot
 
-<img src="./img/bifrost_demo_notifications.png" alt="Example of Discord notifications"/>
+<img src="./img/bifrost_demo_notifications.png" alt="Example of Discord notifications" style="height: 50%; width:50%;"/>
 
 `bifrost-discord-bot` is a bespoke application that notifies (via Discord) about [Bifrost](https://bifrost.subscan.io/) minting and redemption events using Subquery GraphQL feed. Sponsored by Subquery [Grant Programme](https://subquery.network/grants), March 2022. 
 
