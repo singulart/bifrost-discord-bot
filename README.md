@@ -1,30 +1,18 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+## bifrost-discord-bot
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<img src="./img/bifrost_demo_notifications.png" alt="Example of Discord notifications"/>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+`bifrost-discord-bot` is a bespoke application that notifies (via Discord) about [Bifrost](https://bifrost.subscan.io/) minting and redemption events using Subquery GraphQL feed. Sponsored by Subquery [Grant Programme](https://subquery.network/grants), March 2022. 
 
-## Description
+`bifrost-discord-bot` doesn't use any custom Discord commands, and isn't programmed to react to mentions and DMs, so strictly speaking this is not a bot.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Dependencies
+
+`bifrost-discord-bot` requires [Bifrost Subquery Index](https://github.com/bifrost-finance/bifrost-subql) to be available, and there are two main reasons for this dependency. 
+
+Firstly, the runtime dependency: the `bifrost-discord-bot` consumes the GraphQL API provided by the Bifrost Subquery Index. By default, the Subquery API is expected to be deployed to http://localhost:3000. 
+
+Secondly: code dependency. To interact with the GraphQL API, the `bifrost-discord-bot` uses auto-generated type-safe client code `src/types.ts` (not pushed to Github for obvious reasons). To generate this client code, the schema provided by Bifrost Subquery Index is required. 
 
 ## Installation
 
@@ -32,41 +20,39 @@
 $ npm install
 ```
 
+## Configuration
+
+Config file: [src/config.ts](./src/config.ts)
+
+Obligatory environment variable `TOKEN` provides the value of your Discord bot user token. 
+
+## Code Generation
+
+```bash
+$ npm run generate
+```
+
 ## Running the app
+
+Make sure the client code is generated as shown above. 
 
 ```bash
 # development
-$ npm run start
+$ TOKEN=<`DISCORD TOKEN`> npm run start
 
 # watch mode
-$ npm run start:dev
+$ TOKEN=<`DISCORD TOKEN`> npm run start:dev
 
 # production mode
-$ npm run start:prod
+$ TOKEN=<`DISCORD TOKEN`> npm run start:prod
 ```
 
-## Test
+## References
 
-```bash
-# unit tests
-$ npm run test
+Subquery: https://subquery.network/
 
-# e2e tests
-$ npm run test:e2e
+Bifrost: https://wiki.bifrost.finance/
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
